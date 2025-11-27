@@ -1,0 +1,160 @@
+/**
+ * @emailbuilder-v1 - React Wrapper for EmailBuilder v1
+ * 
+ * This package provides a React component wrapper that loads EmailBuilder
+ * from CDN.
+ * 
+ * @example
+ * ```tsx
+ * import EmailBuilder from '@emailbuilder-v1';
+ * import '@emailbuilder-v1/styles.css';
+ * 
+ * function App() {
+ *   return (
+ *     <EmailBuilder
+ *       height="100vh"
+ *       onExport={(html, mjml) => {
+ *         console.log('HTML:', html);
+ *         console.log('MJML:', mjml);
+ *       }}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+
+import React, { useEffect, useRef, useState } from 'react';
+
+const CDN_JS_URL = 'https://static.gooups.dev/assets/builder.js';
+const CDN_CSS_URL = 'https://static.gooups.dev/assets/builder.css';
+
+interface EmailBuilderProps {
+  height?: string;
+  onExport?: (html: string, mjml: string) => void;
+  initialTemplate?: any;
+  [key: string]: any;
+}
+
+let scriptsLoaded = false;
+let scriptPromise: Promise<void> | null = null;
+
+function loadScripts(): Promise<void> {
+  if (scriptsLoaded) {
+    return Promise.resolve();
+  }
+
+  if (scriptPromise) {
+    return scriptPromise;
+  }
+
+  scriptPromise = new Promise((resolve, reject) => {
+    // Load CSS
+    if (!document.querySelector(`link[href="${CDN_CSS_URL}"]`)) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = CDN_CSS_URL;
+      document.head.appendChild(link);
+    }
+
+    // Load React dependencies if not already loaded
+    const loadReact = () => {
+      return new Promise<void>((resolveReact) => {
+        if (window.React && window.ReactDOM) {
+          resolveReact();
+          return;
+        }
+
+        const reactScript = document.createElement('script');
+        reactScript.src = 'https://unpkg.com/react@18/umd/react.production.min.js';
+        reactScript.crossOrigin = 'anonymous';
+        
+        const reactDomScript = document.createElement('script');
+        reactDomScript.src = 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js';
+        reactDomScript.crossOrigin = 'anonymous';
+
+        reactScript.onload = () => {
+          reactDomScript.onload = () => resolveReact();
+          document.body.appendChild(reactDomScript);
+        };
+
+        document.body.appendChild(reactScript);
+      });
+    };
+
+    // Load EmailBuilder script
+    loadReact().then(() => {
+      if (!document.querySelector(`script[src="${CDN_JS_URL}"]`)) {
+        const script = document.createElement('script');
+        script.src = CDN_JS_URL;
+        script.onload = () => {
+          scriptsLoaded = true;
+          resolve();
+        };
+        script.onerror = () => reject(new Error('Failed to load EmailBuilder'));
+        document.body.appendChild(script);
+      } else {
+        scriptsLoaded = true;
+        resolve();
+      }
+    });
+  });
+
+  return scriptPromise;
+}
+
+const EmailBuilder: React.FC<EmailBuilderProps> = ({ height = '600px', onExport, initialTemplate, ...props }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadScripts()
+      .then(() => {
+        setIsLoaded(true);
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded && containerRef.current && (window as any).EmailBuilder) {
+      const EmailBuilderComponent = (window as any).EmailBuilder.EmailBuilder;
+      const root = (window as any).ReactDOM.createRoot(containerRef.current);
+      
+      root.render(
+        (window as any).React.createElement(EmailBuilderComponent, {
+          height,
+          onExport,
+          initialTemplate,
+          ...props
+        })
+      );
+
+      return () => {
+        root.unmount();
+      };
+    }
+  }, [isLoaded, height, onExport, initialTemplate, props]);
+
+  if (error) {
+    return <div style={{ padding: '20px', color: 'red' }}>Error loading EmailBuilder: {error}</div>;
+  }
+
+  if (!isLoaded) {
+    return <div style={{ padding: '20px' }}>Loading EmailBuilder...</div>;
+  }
+
+  return <div ref={containerRef} style={{ height }} />;
+};
+
+export default EmailBuilder;
+
+// Type definitions for window
+declare global {
+  interface Window {
+    React: any;
+    ReactDOM: any;
+    EmailBuilder: any;
+  }
+}

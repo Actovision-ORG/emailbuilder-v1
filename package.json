@@ -1,40 +1,53 @@
 {
-  "name": "@emailbuilder-v1/emailbuilder-v1",
+  "name": "@actovision/emailbuilder-v1",
   "version": "1.0.0",
-  "description": "Complete email builder package - includes core, react, and all dependencies",
+  "description": "React wrapper for EmailBuilder v1 - Production-ready email builder with React DnD and MJML",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsc && cp ../emailbuilder-v1-core/packages/react/src/*.css dist/ 2>/dev/null || true",
+    "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
     "email",
+    "email-builder",
+    "email-editor",
     "builder",
     "mjml",
     "react",
     "react-dnd",
     "editor",
     "drag-and-drop",
-    "email-editor"
+    "wysiwyg",
+    "visual-editor",
+    "template-builder",
+    "responsive-email"
   ],
-  "author": "Actovision",
+  "author": "Actovision <contact@actovision.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
-  },
-  "dependencies": {
-    "@emailbuilder-v1/core": "^1.0.0",
-    "@emailbuilder-v1/react": "^1.0.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.48",
@@ -43,8 +56,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Actovision-ORG/emailbuilder-wrapper.git"
+    "url": "git+https://github.com/Actovision-ORG/emailbuilder-v1.git"
   },
+  "bugs": {
+    "url": "https://github.com/Actovision-ORG/emailbuilder-v1/issues"
+  },
+  "homepage": "https://github.com/Actovision-ORG/emailbuilder-v1#readme",
   "publishConfig": {
     "access": "public"
   }
