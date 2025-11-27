@@ -7,8 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - 2025-11-27
 
-### Changed
-- Removed all Unlayer references from documentation and code
+### Changed 
 - Updated README to remove comparisons to third-party tools
 
 ### Fixed
