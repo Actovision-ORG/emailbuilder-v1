@@ -9,12 +9,17 @@ A lightweight React component that loads EmailBuilder from CDN. Build beautiful,
 
 ## Features
 
-✨ **CDN-Based** - Loads optimized bundle from CDN (181KB, 50KB gzipped)
-📦 **Small Bundle** - React external, only builder code included
-🎨 **Drag-and-Drop** - Intuitive email builder interface
-📧 **MJML Export** - Production-ready responsive emails
-🔧 **TypeScript** - Full type safety included
-🚀 **Efficient** - Share React across your app
+✨ **CDN-Based** - Loads optimized bundle from CDN (181KB, 50KB gzipped)  
+📦 **Small Bundle** - React external, only builder code included  
+🎨 **Drag-and-Drop** - Intuitive email builder interface powered by react-dnd  
+📧 **MJML Export** - Production-ready responsive emails  
+🔧 **TypeScript** - Full type safety included  
+🚀 **Efficient** - Share React across your app  
+🏷️ **11 Components** - Text, button, image, video, timer, HTML, divider, spacer, social, columns, section  
+↩️ **Undo/Redo** - Full history tracking with 50-state limit  
+🎨 **Design System** - Customizable color palettes and typography  
+💾 **Templates** - Pre-built templates (newsletter, welcome email)  
+📐 **Layout System** - Multi-column layouts (2-4 columns) and sections  
 
 ## Installation
 
@@ -51,23 +56,85 @@ That's it! The component will automatically load the EmailBuilder from CDN.
 **Props:**
 - `height?: string` - Builder height (default: `"600px"`)
 - `onExport?: (html: string, mjml: string) => void` - Export callback
-- `initialTemplate?: any` - Starting template
-- `...props` - Additional props passed to the builder
+- `initialTemplate?: EmailTemplate` - Starting template
+- `onSave?: (template: EmailTemplate) => void` - Save callback
+- `onChange?: (components: EmailComponent[]) => void` - Change callback
+- `style?: React.CSSProperties` - Custom inline styles
 
 **Example:**
 ```tsx
-<EmailBuilder
-  height="100vh"
-  onExport={(html, mjml) => {
-    // Handle export
-    downloadFile('email.html', html);
-  }}
-  initialTemplate={{
-    components: [],
-    styles: {}
-  }}
-/>
+import EmailBuilder from '@actovision/emailbuilder-v1';
+
+function App() {
+  const handleExport = (html: string, mjml: string) => {
+    console.log('HTML:', html);
+    console.log('MJML:', mjml);
+    // Save to your backend
+  };
+
+  const handleSave = (template: any) => {
+    console.log('Template saved:', template);
+    // Save to your backend
+  };
+
+  return (
+    <EmailBuilder
+      height="100vh"
+      onExport={handleExport}
+      onSave={handleSave}
+      initialTemplate={{
+        name: 'My Email',
+        category: 'custom',
+        components: []
+      }}
+    />
+  );
+}
 ```
+
+## Available Components
+
+The builder includes 11 pre-built components:
+
+1. **Text** - Rich text with font size, color, alignment, and padding
+2. **Button** - Call-to-action buttons with custom styling and border radius
+3. **Image** - Responsive images with URL, alt text, and width
+4. **Video** - Video embeds with poster image and controls
+5. **Timer** - Countdown timers with target date and format
+6. **HTML** - Custom HTML blocks for advanced users
+7. **Divider** - Horizontal dividers with custom color and width
+8. **Spacer** - Vertical spacing control with adjustable height
+9. **Social** - Social media icons (Facebook, Twitter, Instagram, LinkedIn, YouTube, GitHub, etc.)
+10. **Columns** - Multi-column layouts (2, 3, or 4 columns)
+11. **Section** - Container sections with background colors and padding
+
+## Key Features
+
+### Drag-and-Drop Interface
+- Intuitive drag-and-drop powered by react-dnd
+- Nested drop zones for columns and sections
+- Visual feedback with toast notifications
+- Smart targeting prevents event bubbling
+
+### Undo/Redo System
+- Full history tracking with 50-state limit
+- Navigate through all changes
+- Immutable state updates
+
+### Design System
+- Customizable color palettes
+- Typography controls
+- Consistent styling across components
+
+### Template System
+- Pre-built templates (newsletter, welcome email)
+- Save and load custom templates
+- Template selector interface
+
+### Export Options
+- Export to MJML format
+- Convert to production-ready HTML
+- Visual feedback during export
 
 ## CDN URLs
 
@@ -89,7 +156,7 @@ This package:
 - ✅ Fast loading from global CDN
 - ✅ Uses your existing React installation
 - ✅ No React version conflicts
-- ✅ Smaller bundle size (44% reduction)
+- ✅ Smaller bundle size (44% reduction vs bundling React)
 - ✅ Better caching (React cached separately)
 - ✅ Simple React API
 
@@ -109,7 +176,7 @@ For plain HTML/JavaScript without npm:
   <!-- Include React first -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
+  
   <!-- Then EmailBuilder (181KB, 50KB gzipped) -->
   <script src="https://static.gooups.dev/assets/builder.js"></script>
 
@@ -143,6 +210,9 @@ const builder = (
     onExport={(html: string, mjml: string) => {
       // Typed parameters
     }}
+    onSave={(template: any) => {
+      // Template is typed
+    }}
   />
 );
 ```
@@ -167,10 +237,19 @@ const builder = (
 - Smaller individual bundle sizes
 - Standard CDN pattern
 
-## Source Code
+## Advanced Usage
 
-For the full EmailBuilder source code and development:
-- **Core Project**: https://github.com/Actovision-ORG/emailbuilder-v1-core
+For direct package usage, API documentation, and advanced examples, see the core project:
+
+**Core Project**: https://github.com/Actovision-ORG/emailbuilder-v1-core
+
+The core repository includes:
+- Individual package usage (`@emailbuilder-v1/core` and `@emailbuilder-v1/react`)
+- Advanced API documentation
+- Component customization examples
+- MJML converter usage
+- Context hook documentation
+- Development and build instructions
 
 ## Contributing
 
@@ -182,7 +261,7 @@ MIT © [Actovision](https://github.com/Actovision-ORG)
 
 ## Support
 
-- 📖 [Documentation](https://github.com/Actovision-ORG/emailbuilder-v1#readme)
+- 📖 [Documentation](https://github.com/Actovision-ORG/emailbuilder-v1-core)
 - 🐛 [Issue Tracker](https://github.com/Actovision-ORG/emailbuilder-v1/issues)
 - 💬 [Discussions](https://github.com/Actovision-ORG/emailbuilder-v1/discussions)
 
